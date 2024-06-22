@@ -6,12 +6,27 @@
 </head>
 
 <body>
-  <div id="main">
-    <span>Attack damage: <input id="damage-input"></span> <span id="parsing-error-output"></span>
+  <div id="attack">
+    <h2>Attack rolls</h1>
+    <span>Modifier to hit: <input placeholder="Example: +7" id="attack-input"></span> <span id="parsing-attack-error"></span>
+    <br>
+    <label for="is-advantage">Is advantage?</label><input name="is-advantage" id="is-advantage" type="checkbox">
+    <label for="is-disadvantage">Is disadvantage?</label><input name="is-disadvantage" id="is-disadvantage" type="checkbox">
+    <br>
+    <button id="roll-attack">Roll to hit</button>
+    <br>
+    <span>Hits AC: </span><code id="attack-output"></code>
+  </div>
+
+  <hr>
+
+  <div id="damage">
+    <h2>Damage rolls</h1>
+    <span>Attack damage: <input placeholder="Example: 1d8 + 2" id="damage-input"></span> <span id="parsing-damage-error"></span>
     <br>
     <label for="is-critical">Is critical?</label><input name="is-critical" id="is-critical" type="checkbox">
     <br>
-    <button id="roll">Roll damage</button>
+    <button id="roll-damage">Roll damage</button>
     <br>
     <span>Damage: </span><code id="damage-output"></code>
   </div>
