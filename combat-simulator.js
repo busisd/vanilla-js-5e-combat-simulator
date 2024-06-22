@@ -228,6 +228,7 @@ const parsingDamageError = document.getElementById("parsing-damage-error");
 const rollDamageButton = document.getElementById("roll-damage");
 const isCriticalCheckbox = document.getElementById("is-critical");
 const damageOutput = document.getElementById("damage-output");
+const visualDamageOutput = document.getElementById("visual-damage-output");
 
 /*** Parsing logic ***/
 const diceRegex = /^[1-9]\d*d[1-9]\d*$/;
@@ -288,4 +289,18 @@ rollDamageButton.addEventListener("click", () => {
   const isCritical = isCriticalCheckbox.checked;
   const { damage, rolls } = inputDamage.rollDamage(isCritical);
   damageOutput.textContent = `${damage} (${rolls.join(" + ")})`;
+
+  while (visualDamageOutput.lastChild) {
+    visualDamageOutput.lastChild.remove();
+  }
+
+  visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg(damage)));
+  visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg("(", { width: 40 })));
+  for (let i = 0; i < rolls.length; i++) {
+    visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg(rolls[i], { width: 40 })));
+    if (i < rolls.length - 1) {
+      visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg("+", { width: 40 })));
+    }
+  }
+  visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg(")", { width: 40 })));
 });
