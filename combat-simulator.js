@@ -7,6 +7,52 @@ function sumArr(arr) {
   return arr.reduce((runningTotal, number) => runningTotal + number, 0);
 }
 
+/*** SVG ***/
+const getOpenSvgTag = ({ width = 200 } = {}) => `
+<svg viewBox="0 0 ${width} 200" xmlns="http://www.w3.org/2000/svg" style="width: ${width / 2}px; height: 100px;">
+`
+
+const getTextSvgTag = (text, { width = 200, color = "black" } = {}) => `
+<text
+  font-size="60"
+  text-anchor="middle"
+  dominant-baseline="middle"
+  font-family="monospace"
+  font-weight="bold"
+  x="${width / 2}"
+  y="100"
+  fill="${color}"
+  stroke="${color}"
+  stroke-width="1"
+>${text}</text>
+`
+
+const getPlaintextSvg = (text, { width = 200, color = "black" } = {}) => `
+${getOpenSvgTag({ width })}
+  ${getTextSvgTag(text, { width, color })}
+</svg>
+`
+
+const getD20Svg = (text, { color = "black" } = {}) => `
+${getOpenSvgTag()}
+  <polyline points="32,58 168,58 100,180 32,58" fill="none" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <polyline points="32,58 100,5 168,58 182,148 100,180 18,148 32,58" fill="none" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <polyline points="18,52 100,5 182,52 182,148 100,195 18,148 18,52" fill="none" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <line x1="18" y1="52" x2="32" y2="58" stroke="black" stroke-linecap="round" stroke-width="5"/>
+  <line x1="182" y1="52" x2="168" y2="58" stroke="black" stroke-linecap="round" stroke-width="5"/>
+  <line x1="100" y1="195" x2="100" y2="180" stroke="black" stroke-linecap="round" stroke-width="5"/>
+  ${getTextSvgTag(text, { color })}
+</svg>
+`
+
+const getSvgElement = (svgText) => {
+  const elementWrapper = document.createElement("span");
+  const element = document.createElement("div");
+  elementWrapper.appendChild(element);
+  element.outerHTML = svgText;
+  return elementWrapper;
+}
+
 /*** Classes ***/
 class Die {
   constructor(maxRoll) {
@@ -94,6 +140,7 @@ const rollAttackButton = document.getElementById("roll-attack");
 const isAdvantageCheckbox = document.getElementById("is-advantage");
 const isDisadvantageCheckbox = document.getElementById("is-disadvantage");
 const attackOutput = document.getElementById("attack-output");
+const visualAttackOutput = document.getElementById("visual-attack-output");
 
 /*** Parsing logic ***/
 const attackBonusRegex = /^[+-]\d+$/;
@@ -139,6 +186,16 @@ attackInput.addEventListener("blur", () => {
   }
 });
 
+const getRollColor = (roll) => {
+  if (roll === 20) {
+    return "#27751e";
+  } else if (roll === 1) {
+    return "#a32431";
+  } else {
+    return "black"
+  }
+}
+
 rollAttackButton.addEventListener("click", () => {
   const isAdvantage = isAdvantageCheckbox.checked;
   const isDisadvantage = isDisadvantageCheckbox.checked;
@@ -147,7 +204,22 @@ rollAttackButton.addEventListener("click", () => {
     disadvantage: isDisadvantage
   });
   attackOutput.textContent = `${result} (${rolls.join(", ")})`;
-})
+
+  while (visualAttackOutput.lastChild) {
+    visualAttackOutput.lastChild.remove();
+  }
+
+  const resultColor = isAdvantage ?
+    getRollColor(Math.max(...rolls)) :
+    getRollColor(Math.min(...rolls))
+
+  visualAttackOutput.appendChild(getSvgElement(getPlaintextSvg(result, { color: resultColor })));
+  visualAttackOutput.appendChild(getSvgElement(getPlaintextSvg("(", { width: 40 })));
+  for (const roll of rolls) {
+    visualAttackOutput.appendChild(getSvgElement(getD20Svg(roll, { color: getRollColor(roll) })));
+  }
+  visualAttackOutput.appendChild(getSvgElement(getPlaintextSvg(")", { width: 40 })));
+});
 
 /************ Damage rolls section ************/
 /*** HTML elements ***/
@@ -216,4 +288,4 @@ rollDamageButton.addEventListener("click", () => {
   const isCritical = isCriticalCheckbox.checked;
   const { damage, rolls } = inputDamage.rollDamage(isCritical);
   damageOutput.textContent = `${damage} (${rolls.join(" + ")})`;
-})
+});
