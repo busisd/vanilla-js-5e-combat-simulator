@@ -295,12 +295,12 @@ rollDamageButton.addEventListener("click", () => {
   }
 
   visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg(damage)));
-  visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg("(", { width: 40 })));
+  visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg("(", { width: 30 })));
   for (let i = 0; i < rolls.length; i++) {
-    visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg(rolls[i], { width: 40 })));
+    visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg(rolls[i], { width: 80 })));
     if (i < rolls.length - 1) {
-      visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg("+", { width: 40 })));
+      visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg("+", { width: 30 })));
     }
   }
-  visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg(")", { width: 40 })));
+  visualDamageOutput.appendChild(getSvgElement(getPlaintextSvg(")", { width: 30 })));
 });
